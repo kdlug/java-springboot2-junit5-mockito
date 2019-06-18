@@ -27,3 +27,7 @@
 @Spy - Creates a spy
 @InjectMocks - Inject mocks / spy into a class under test
 @Captor - Captures arguments to Mock
+
+## Issues
+
+Fix IllegalStateException: Could not initialize plugin MockMaker https://howtodoinjava.com/mockito/plugin-mockmaker-error/
