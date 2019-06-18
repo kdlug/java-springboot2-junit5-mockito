@@ -1,17 +1,29 @@
-# Introduction to JUnit 5 with Mockito
+# JUnit 5 with Mockito
 
-All source code examples in the repository are for my [Online Course - Testing Spring Beginner to Guru](https://www.udemy.com/testing-spring-boot-beginner-to-guru/?couponCode=GITHUB_REPO)
+## What is Mockito ?
 
-This source code repository contains JUnit 5 and Mockito test examples with Maven.
+- Mocking framework for testing
+- Mocks (Test Doubles) are alternate implentations of objects to replase real objects in tests
+- Works well with dependency injections
+- For the class under test, injected dependencies can be mocks
 
-## Setup
-### Requirements
-* Should use Java 11 or higher. Previous versions of Java are un-tested.
-* Use Maven 3.5.2 or higher
+## Types of mocks
 
-## Support
-For questions and help:
-* Please post in course
-* Or post in the Slack Community exclusive to the course.
+- *Dummy* - Objects used just to get the code to compile
+- *Fake* - An object that has an implementation, but not production ready
+- *Stub* - An objects with pre-defined answers to method calls
+- *Mock* - An object with pre-defined answers to method calls and has expectations of executions. Can throw an exception if an unexpected invocation is detected
+- *Spy* - In Mockito Spieces are Mock like wrappers around the actual objects
 
-GitHub Issues will not be addressed.
+## Terminology
+
+- Verify - Used to verify number of times a mocked method has been called
+- Argument Matcher - Matches arguments passed to Mocked Method & will allow or disallow
+- Argument Captor - Captures arguments passed to a Mocked Method. Allows you to perform assertions of what was passed it to method
+
+## Annotations
+
+@Mock - Creates a mock
+@Spy - Creates a spy
+@InjectMocks - Inject mocks / spy into a class under test
+@Captor - Captures arguments to Mock
