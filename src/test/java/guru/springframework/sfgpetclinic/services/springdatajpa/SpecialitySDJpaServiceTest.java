@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +47,18 @@ class SpecialitySDJpaServiceTest {
     }
 
     @Test
+    void findByIdBddTest() {
+        Speciality speciality = new Speciality();
+
+        given(specialtyRepository.findById(1l)).willReturn(Optional.of(speciality));
+
+        Speciality foundSpecialty = service.findById(1l);
+        Assertions.assertThat(foundSpecialty).isNotNull();
+        verify(specialtyRepository).findById(anyLong());
+    }
+
+
+    @Test
     void deleteById() {
         service.deleteById(1l);
         service.deleteById(1l);
@@ -53,7 +66,6 @@ class SpecialitySDJpaServiceTest {
         // verifies how many times method was called
         verify(specialtyRepository, times(2)).deleteById(1l);
     }
-
 
     @Test
     void deleteByIdAtLeast() {
