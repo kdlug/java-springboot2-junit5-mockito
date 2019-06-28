@@ -23,6 +23,14 @@ class SpecialitySDJpaServiceTest {
     SpecialitySDJpaService service;
 
     @Test
+    void testDeleteByObject() {
+        Speciality speciality = new Speciality();
+        service.delete(speciality);
+
+        verify(specialtyRepository).delete(any(Speciality.class)); // test if delete method is called with any object that has a Specialty class
+    }
+
+    @Test
     void findByIdTest() {
         // Mock will return back this object
         Speciality speciality = new Speciality();
@@ -34,6 +42,7 @@ class SpecialitySDJpaServiceTest {
         Assertions.assertThat(foundSpecialty).isNotNull();
 
         verify(specialtyRepository).findById(1l); // checks that findById was called once
+        verify(specialtyRepository).findById(any());
     }
 
     @Test
