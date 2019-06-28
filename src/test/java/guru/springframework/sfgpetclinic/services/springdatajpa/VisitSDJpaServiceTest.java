@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,74 +26,77 @@ class VisitSDJpaServiceTest {
     @Mock
     private VisitRepository visitRepository;
 
-//    @Mock
-//    private Pet pet;
-
-//    @Mock
-//    private Owner owner;
-
     @InjectMocks
     VisitSDJpaService service;
 
     @Test
-    void findAllTest() {
+    void findAll() {
+        // given
         Visit visit = new Visit();
-
         Set<Visit> visits = new HashSet<>();
         visits.add(visit);
+        given(visitRepository.findAll()).willReturn(visits);
 
-        when(visitRepository.findAll()).thenReturn(visits);
-
+        // when
         Set<Visit> foundVisits = service.findAll();
+
+        // then
+        then(visitRepository).should(times(1)).findAll();
         Assertions.assertThat(foundVisits).isNotNull();
         Assertions.assertThat(foundVisits).hasSize(1);
-
-        verify(visitRepository, times(1)).findAll();
-
     }
 
     @Test
     void findById() {
+        // given
         Visit visit = new Visit();
 
         // check if find ById returns a visit Object
-        when(visitRepository.findById(1l)).thenReturn(Optional.of(visit));
+        given(visitRepository.findById(1l)).willReturn(Optional.of(visit));
 
+        // when
         Visit foundVisit = service.findById(1L);
-        Assertions.assertThat(foundVisit).isNotNull();
-        verify(visitRepository).findById(anyLong()); // checks that findById was called once when run service.findById()
 
+        // then
+        then(visitRepository).should().findById(anyLong()); // checks that findById was called once when run service.findById()
+        Assertions.assertThat(foundVisit).isNotNull();
     }
 
     @Test
     void save() {
+        // given
         Visit visit = new Visit();
+        given(visitRepository.save(any(Visit.class))).willReturn(visit);
 
-       // check if save returns a visit Object
-        when(visitRepository.save(any(Visit.class))).thenReturn(visit);
-
+        // when
+        // check if save returns a visit Object
         Visit savedVisit = service.save(new Visit());
 
-        verify(visitRepository).save(any(Visit.class));
-
+        // then
+        then(visitRepository).should().save(any(Visit.class));
         Assertions.assertThat(savedVisit).isNotNull();
     }
 
     @Test
     void delete() {
+        // given
         Visit visit = new Visit();
+
+        // when
         service.delete(visit);
 
-        verify(visitRepository).delete(any(Visit.class));
-        verify(visitRepository, times(1)).delete(visit);
-
+        // then
+        then(visitRepository).should().delete(any(Visit.class));
+        then(visitRepository).should(times(1)).delete(visit);
     }
 
     @Test
-    void deleteByIdTest() {
+    void deleteById() {
+        // when
         service.deleteById(1l);
 
-        verify(visitRepository).deleteById(anyLong());
-        verify(visitRepository, times(1)).deleteById(1l);
+        // then
+        then(visitRepository).should().deleteById(anyLong());
+        then(visitRepository).should(times(1)).deleteById(1l);
     }
 }
