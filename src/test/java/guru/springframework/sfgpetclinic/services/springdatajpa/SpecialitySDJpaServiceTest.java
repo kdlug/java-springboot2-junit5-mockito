@@ -12,8 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -107,5 +106,35 @@ class SpecialitySDJpaServiceTest {
 
         // then
         then(specialtyRepository).should().delete(any(Speciality.class));
+    }
+
+    @Test
+    void testFoThrow() {
+        // the most typical use of throwing exceptions
+        doThrow(new RuntimeException("boom")).when(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        verify(specialtyRepository).delete(any());
+    }
+
+    @Test
+    void testFindByIDThrows() {
+        // BDD approach
+        given(specialtyRepository.findById(1l)).willThrow(new RuntimeException("boom"));
+
+        assertThrows(RuntimeException.class, () -> service.findById(1l));
+
+        then(specialtyRepository).should().findById(1l);
+    }
+
+    @Test
+    void deleteBDD() {
+        // BDD when a method returns void
+        willThrow(new RuntimeException("boom")).given(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        then(specialtyRepository).should().delete(any());
     }
 }
