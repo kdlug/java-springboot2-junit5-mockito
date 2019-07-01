@@ -31,3 +31,131 @@
 ## Issues
 
 Fix IllegalStateException: Could not initialize plugin MockMaker https://howtodoinjava.com/mockito/plugin-mockmaker-error/
+
+
+## Set up mockito
+
+There are 3 ways to setup mockito
+
+### Inline mock
+
+```java
+public class InlineMockTest {
+    @Test
+    void testInlineMock() {
+        Map mapMock = mock(Map.class);
+
+        assertEquals(0, mapMock.size());
+    }
+}
+```
+
+### Annotation mock
+
+```java
+public class AnnotationMocksTest {
+    @Mock
+    Map<String, Object> mapMock;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    void testMock() {
+        mapMock.put("keyvalue", "foo");
+    }
+}
+```
+
+### JUnit Extension
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class JunitExtensionTest {
+    @Mock
+    Map<String, Object> mapMock;
+
+    @Test
+    void testMock() {
+        mapMock.put("key", "foo");
+    }
+}
+```
+
+## BDD Behavior Driven Development
+
+- Unit tests are referred to as specification ie. specifications of behaviors.
+- Test method names should be sentences ie. saveValidID.
+- BDD tests are often written in given-when-then context
+- Mockito has added BDD support in class BDDMockito
+- Static method given allows you to configure mocks
+- Static method then allows you to verify mock interactions
+
+```java
+// instead of
+when(specialtyRepository.findById(1l)).thenReturn(Optional.of(speciality));
+verify(specialtyRepository).findById(anyLong());
+        // 
+// BDD stype
+given(specialtyRepository.findById(1l)).willReturn(Optional.of(speciality));
+then(specialtyRepository).should().findById(anyLong());
+```
+
+Example 
+
+```java
+    @Test
+    void findByIdBddTest() {
+        // given
+        Speciality speciality = new Speciality();
+        given(specialtyRepository.findById(1l)).willReturn(Optional.of(speciality));
+
+        // when
+        Speciality foundSpecialty = service.findById(1l);
+
+        // then
+        Assertions.assertThat(foundSpecialty).isNotNull();
+        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
+    }
+
+```
+
+## Throwing Exceptions
+
+3 ways
+
+```java
+    @Test
+    void testFoThrow() {
+        // the most typical use of throwing exceptions
+        doThrow(new RuntimeException("boom")).when(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        verify(specialtyRepository).delete(any());
+    }
+
+    @Test
+    void testFindByIDThrows() {
+        // BDD approach
+        given(specialtyRepository.findById(1l)).willThrow(new RuntimeException("boom"));
+
+        assertThrows(RuntimeException.class, () -> service.findById(1l));
+
+        then(specialtyRepository).should().findById(1l);
+    }
+
+    @Test
+    void deleteBDD() {
+        // BDD when a method returns void
+        willThrow(new RuntimeException("boom")).given(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        then(specialtyRepository).should().delete(any());
+    }
+    
+```
