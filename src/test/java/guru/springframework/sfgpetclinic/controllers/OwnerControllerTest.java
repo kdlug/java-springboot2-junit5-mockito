@@ -96,6 +96,7 @@ class OwnerControllerTest {
         // model.addAttribute() method should be after ownerService.findAll...
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
         inOrder.verify(model).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(model);
     }
 
 
@@ -111,6 +112,7 @@ class OwnerControllerTest {
         // then
         assertThat("%DontFindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("owners/findOwners").isEqualToIgnoringCase(viewName);
+        verifyZeroInteractions(model);
     }
 
     @Test
