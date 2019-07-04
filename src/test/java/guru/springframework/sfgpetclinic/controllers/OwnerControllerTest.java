@@ -16,12 +16,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerControllerTest {
@@ -29,6 +27,9 @@ class OwnerControllerTest {
 
     @InjectMocks
     OwnerController controller;
+
+    @Mock
+    Model model;
 
     @Mock
     BindingResult bindingResult;
@@ -82,14 +83,19 @@ class OwnerControllerTest {
     void processFindFormWildcardStringAnnotationFoundMultipleAnswers() {
         // given
         Owner owner = new Owner(1l, "John", "FindMe");
-        List<Owner> ownerList = new ArrayList<>();
+        // setup in order declaration
+        InOrder inOrder = inOrder(ownerService, model); // order here doesn't make any difference
 
         // when
-        String viewName = controller.processFindForm(owner, bindingResult, mock(Model.class));
+        String viewName = controller.processFindForm(owner, bindingResult, model);
 
         // then
         assertThat("%FindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("owners/ownersList").isEqualToIgnoringCase(viewName);
+        // in order asserts
+        // model.addAttribute() method should be after ownerService.findAll...
+        inOrder.verify(ownerService).findAllByLastNameLike(anyString());
+        inOrder.verify(model).addAttribute(anyString(), anyList());
     }
 
 
